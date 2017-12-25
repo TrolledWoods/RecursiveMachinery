@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="InventoryManager.cs" />
     <Compile Include="Machine.cs" />
     <Compile Include="MenuSystem.cs" />
     <Compile Include="Program.cs" />

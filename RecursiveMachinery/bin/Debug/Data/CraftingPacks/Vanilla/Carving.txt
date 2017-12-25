@@ -1,8 +1,0 @@
-#Pack VanillaPack
-
-Log => Rough bowl
-Tree => Log
-Log => Plank
-
-Stone => Gravel
-Gravel => Sand

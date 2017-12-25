@@ -10,32 +10,56 @@ namespace RecursiveMachinery
     {
         static void Main(string[] args)
         {
-            Reload();
+            // Load the resources
+            Load();
+
+            // Start the game
+            
+        }
+
+        public static void Load()
+        {
+            Console.Clear();
+            Program.LogLoading("game");
+            // Load all the resources
+            Resources.LoadAllResources(System.AppDomain.CurrentDomain.BaseDirectory + "/Data/ResourcePacks/");
+            Program.LogFinish();
+
+            // Press any key to continue message
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine();
+            Console.WriteLine("Press any key to continue..");
             Console.ReadKey();
         }
 
-        public static void Reload()
-        {
-            Console.Clear();
-            Console.WriteLine("Loading game...");
-            Console.WriteLine("Loading resources");
-            // Load all the resources
-            Resources.LoadAllResources(System.AppDomain.CurrentDomain.BaseDirectory + "/Data/ResourcePacks/");
+        public static string StandardIndent = " | ";
+        static Stack<string> LoadingStack = null;
 
-            // Display all the resources
-            int packIndex = 0;
-            for (int i = 0; i < Resources.ResourceTypes.Length; i++)
-            {
-                if(Resources.ResourcePacks[packIndex] == i)
-                {
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    Console.WriteLine();
-                    packIndex++;
-                    packIndex = packIndex >= Resources.ResourcePacks.Length ? Resources.ResourcePacks.Length - 1 : packIndex;
-                }
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine(Resources.ResourceTypes[i]);
-            }
+        static string GetIndent(int indent)
+        {
+            string indentString = "";
+            for (int i = 0; i < indent; i++) indentString += StandardIndent;
+            return indentString;
+        }
+
+        public static void LogFinish()
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write(GetIndent(LoadingStack.Count - 1));
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("Finished loading " + LoadingStack.Pop());
+        }
+
+        public static void LogLoading(string whatYoureLoading)
+        {
+            if (LoadingStack == null)
+                LoadingStack = new Stack<string>();
+
+            LoadingStack.Push(whatYoureLoading);
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write(GetIndent(LoadingStack.Count - 1));
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("Loading " + whatYoureLoading);
         }
     }
 }

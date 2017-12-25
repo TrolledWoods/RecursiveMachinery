@@ -1,7 +1,0 @@
-# This is the second sample mod for the game
-Picadelli
-Pickle
-Sandwich
-Fork
-Hamburger
-Lutfisk

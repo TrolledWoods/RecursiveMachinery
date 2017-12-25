@@ -1,0 +1,18 @@
+# Add some important resources
+-ItemMode
+# Add items
+Sand
+Glass
+
+-MachineMode
+#Add machines
+Oven-image:OvenImage.txt
+
+-ItemMode
+
+# Add more items
+WUBADUBADUBDUB
+
+-RecipeMode
+# Add recipes for ovens
+Oven Sand -> Glass
