@@ -1,0 +1,13 @@
+# Wooden materials
+Tree -Basic
+Log
+Plank
+Stick
+
+# Stony materials
+Rock -Basic
+Gravel
+Sand
+
+# Processed materials
+Rough bowl -Sell -5$

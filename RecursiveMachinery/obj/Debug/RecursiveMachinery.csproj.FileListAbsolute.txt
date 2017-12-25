@@ -1,0 +1,7 @@
+C:\Users\erihor\Documents\Visual Studio 2017\RecursiveMachinery\RecursiveMachinery\bin\Debug\RecursiveMachinery.exe.config
+C:\Users\erihor\Documents\Visual Studio 2017\RecursiveMachinery\RecursiveMachinery\bin\Debug\RecursiveMachinery.exe
+C:\Users\erihor\Documents\Visual Studio 2017\RecursiveMachinery\RecursiveMachinery\bin\Debug\RecursiveMachinery.pdb
+C:\Users\erihor\Documents\Visual Studio 2017\RecursiveMachinery\RecursiveMachinery\obj\Debug\RecursiveMachinery.csproj.CoreCompileInputs.cache
+C:\Users\erihor\Documents\Visual Studio 2017\RecursiveMachinery\RecursiveMachinery\obj\Debug\RecursiveMachinery.exe
+C:\Users\erihor\Documents\Visual Studio 2017\RecursiveMachinery\RecursiveMachinery\obj\Debug\RecursiveMachinery.pdb
+C:\Users\erihor\Documents\Visual Studio 2017\RecursiveMachinery\RecursiveMachinery\obj\Debug\RecursiveMachinery.csprojResolveAssemblyReference.cache
