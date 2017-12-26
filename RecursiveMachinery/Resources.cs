@@ -9,7 +9,8 @@ namespace RecursiveMachinery
 {
     public static class Resources
     {
-        public static Scope[] baseResourcePacks;
+        public static List<string> items;
+        public static List<RecipePack> recipePacks;
 
         public static void LoadAllResources(string resourceFolder)
         {
@@ -17,13 +18,16 @@ namespace RecursiveMachinery
             {
                 Program.LogLoading("resources");
                 string[] files = Directory.GetFiles(resourceFolder);
+                items = new List<string>(); // Reinisialize the items
+
                 for(int i = 0; i < files.Length; i++)
                 {
                     if (StringInterpreter.GetFileExtension(files[i]) == "pack")
                     {
-                        LoadScope(resourceFolder, StringInterpreter.GetFileName(files[i]), new int[] { i });
+                        LoadScope(items, resourceFolder, StringInterpreter.GetFileName(files[i]), new int[] { i });
                     }
                 }
+                
                 Program.LogFinish();
 
                 return;
@@ -38,7 +42,7 @@ namespace RecursiveMachinery
             throw new Exception("No resource files");
         }
 
-        static Scope LoadScope(string path, string name, int[] id)
+        static void LoadScope(List<string> itemPack, string path, string name, int[] id)
         {
             if (File.Exists(path + name + ".pack"))
             {
@@ -63,9 +67,6 @@ namespace RecursiveMachinery
                         LinesOfImportance.Add(i);
                 }
 
-                // Initialize all the variables remembering stuff
-                List<string> Items = new List<string>();
-
                 // Go to all the lines of importance that change the mode to
                 // item mode, and then add all of those items to the list of items in the
                 // pack
@@ -77,7 +78,7 @@ namespace RecursiveMachinery
                     {
                         Program.LogLoading("itemMode section on line " + LinesOfImportance[i]);
                         // From here, read all the contents and add them as items
-                        LoadItems(Items, contents, LinesOfImportance[i], i < LinesOfImportance.Count-1 ? LinesOfImportance[i + 1] : contents.Length);
+                        LoadItems(itemPack, contents, LinesOfImportance[i], i < LinesOfImportance.Count-1 ? LinesOfImportance[i + 1] : contents.Length);
                         Program.LogFinish();
                     }
                 }
@@ -97,16 +98,16 @@ namespace RecursiveMachinery
                 }
                 Program.LogFinish(); // Finish the recipes
 
-                // Initialize the scope
-                Scope packScope = new Scope(name, id, Items.ToArray());
+                Program.LogLoading("Loading subpacks in pack " + name);
 
-                // Find all the subScopes
-                LoadSubScopes(packScope, path + name + '/');
+                LoadSubScopes(itemPack, path + name + '/');
+
+                Program.LogFinish();
                 
                 Program.LogFinish(); // Finish the pack
 
-                // Return a new scope with a name, an id, and all the other values as well
-                return packScope;
+                return;
+                
             }
 
             Console.ForegroundColor = ConsoleColor.Red;
@@ -115,32 +116,22 @@ namespace RecursiveMachinery
             throw new Exception("File doesn't exist");
         }
 
-        static void LoadSubScopes(Scope parentScope, string path)
+        static void LoadSubScopes(List<string> itemPack, string path)
         {
             // See if the path exists
             if (Directory.Exists(path))
             {
                 // Load all the files in the directory
                 string[] files = Directory.GetFiles(path);
-
-                // Load the id from the parentScope. If the parentscope is null, just create an empty int array instead
-                int[] id = parentScope == null ? new int[0] : parentScope.scopeID;
-
-                // Make a list of all the subscopes
-                List<Scope> subScopes = new List<Scope>();
-
-                Program.LogLoading("subpacks in pack " + parentScope.Name);
+                
                 // Search through all the files to find all the pack files
                 for (int i = 0; i < files.Length; i++)
                 {
                     if (StringInterpreter.GetFileExtension(files[i]) == "pack")
                     {
-                        subScopes.Add(LoadScope(path, StringInterpreter.GetFileName(files[i]), new int[] { i }));
+                        LoadScope(itemPack, path, StringInterpreter.GetFileName(files[i]), new int[] { i });
                     }
                 }
-                Program.LogFinish();
-
-                parentScope.SubScopes = subScopes.ToArray();
             }
             else
             {
@@ -152,7 +143,7 @@ namespace RecursiveMachinery
             }
         }
         
-        static void LoadItems(List<string> ItemList, string[] lines, int beginLine, int endLine)
+        static void LoadItems(List<string> itemPack, string[] lines, int beginLine, int endLine)
         {
             Console.ForegroundColor = ConsoleColor.White;
             for(int i = beginLine; i < endLine; i++)
@@ -163,35 +154,43 @@ namespace RecursiveMachinery
                     int index = 0;
                     string itemName = StringInterpreter.GetName(lines[i], ref index);
                     Program.LogLoading("item " + itemName);
-                    ItemList.Add(itemName);
+                    itemPack.Add(itemName);
                     Program.LogFinish();
                 }
             }
         }
-    }
 
-    public class Scope
-    {
-        public string Name;
-        public string[] Resources;
-        public Scope[] SubScopes;
-        public Scope ParentScope;
-
-        public int[] scopeID;
-        public int scopeSize; // How many items exist in the scope
-        public int localScopeIndex; // Where in the local scope space the scope lies
-                                    // The local scope space is basically all the items in the parentScopes children.
-                                    // So, where the scope lies is really jus the sum of the scopeSizes of all the
-                                    // previous scope children in the scope parent
-        public int globalScopeIndex; // This value is the parentScopes globalScopeIndex + parentScopes scopeSize, and if there is no
-                                     // parentscope, the value is simply scopeSize
-        
-        public Scope(string name, int[] scopeID, string[] resources)
+        public static int GetItemIDFromName(string itemName)
         {
-            this.Name = name;
-            this.scopeID = scopeID;
+            for(int i = 0; i < items.Count; i++)
+            {
+                if(items[i] == itemName)
+                {
+                    return i;
+                }
+            }
 
-            this.Resources = resources;
+            return -1;
         }
     }
+
+    public class RecipePack
+    {
+        public struct Recipe
+        {
+            int[,] inputs;
+            int[,] outputs;
+
+            public Recipe(int[,] inputs, int[,] outputs) { this.inputs = inputs; this.outputs = outputs; }
+        }
+
+        public string name;
+        public List<Recipe> recipies;
+
+        public RecipePack(string name)
+        {
+            this.name = name;
+        }
+    }
+    
 }

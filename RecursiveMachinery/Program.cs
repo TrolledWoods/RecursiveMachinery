@@ -14,7 +14,9 @@ namespace RecursiveMachinery
             Load();
 
             // Start the game
-            
+            Inventory i = new Inventory();
+
+            Console.ReadKey();
         }
 
         public static void Load()
@@ -48,6 +50,14 @@ namespace RecursiveMachinery
             Console.Write(GetIndent(LoadingStack.Count - 1));
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Finished loading " + LoadingStack.Pop());
+        }
+
+        public static void LogStatus(string statusMessage)
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write(GetIndent(LoadingStack.Count - 1));
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(statusMessage);
         }
 
         public static void LogLoading(string whatYoureLoading)
